@@ -49,19 +49,19 @@ class CartServiceTest {
     @DisplayName("카트 아이템 추가")
     @Test
     void add() {
-        customerDao.save(customer);
+        Long customerId = customerDao.save(customer);
         Long productId = productDao.save(product);
 
-        assertDoesNotThrow(() -> cartService.add(customer.getUsername(), new CartItemAddRequest(productId, 1)));
+        assertDoesNotThrow(() -> cartService.add(customerId, new CartItemAddRequest(productId, 1)));
     }
 
     @DisplayName("카트에 재고보다 많은 수량 추가시 예외 발생")
     @Test
     void add_quantityOverStock_throwsException() {
-        customerDao.save(customer);
+        Long customerId = customerDao.save(customer);
         Long productId = productDao.save(product);
 
-        assertThatThrownBy(() -> cartService.add(customer.getUsername(), new CartItemAddRequest(productId, 11)));
+        assertThatThrownBy(() -> cartService.add(customerId, new CartItemAddRequest(productId, 11)));
     }
 
     @DisplayName("카트 아이템 수량 수정")
@@ -72,7 +72,7 @@ class CartServiceTest {
         Product savedProduct = productDao.findProductById(productId);
         Long cartItemId = cartItemDao.save(customerId, new CartItem(savedProduct, 1));
 
-        cartService.updateQuantity(cartItemId, 2);
+        cartService.updateQuantity(cartItemId, customerId, 2);
         CartItem result = cartItemDao.findById(cartItemId);
 
         assertThat(result.getQuantity()).isEqualTo(2);

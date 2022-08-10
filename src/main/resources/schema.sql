@@ -11,10 +11,10 @@ drop table if exists customer;
 create table customer
 (
     id           bigint       not null auto_increment,
-    username     varchar(255) not null,
+    username     varchar(15) not null,
     password     varchar(64)  not null,
     phone_number varchar(11)  not null,
-    address      varchar(255) not null,
+    address      varchar(80) not null,
     primary key (id)
 ) engine = InnoDB
   default charset = utf8mb4;
@@ -25,7 +25,7 @@ alter table customer
 create table product
 (
     id        bigint       not null auto_increment,
-    name      varchar(255) not null,
+    name      varchar(64) not null,
     price     integer      not null,
     stock     integer      not null,
     image_url varchar(255),

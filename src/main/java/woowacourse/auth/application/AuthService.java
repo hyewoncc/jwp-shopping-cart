@@ -12,7 +12,7 @@ import woowacourse.shoppingcart.dao.CustomerDao;
 import woowacourse.shoppingcart.domain.customer.Customer;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional(rollbackFor = Exception.class)
 public class AuthService {
 
     private final CustomerDao customerDao;
@@ -29,18 +29,19 @@ public class AuthService {
     public TokenResponse login(final TokenRequest request) {
         Customer customer = customerDao.findByUsername(request.getUsername());
         validatePasswordIsCorrect(customer, request.getPassword());
-        String accessToken = jwtTokenProvider.createToken(customer.getUsername());
+        String accessToken = jwtTokenProvider.createToken(Long.toString(customer.getId()));
         return new TokenResponse(accessToken);
     }
 
-    public void checkPassword(final String username, final PasswordRequest request) {
-        Customer customer = customerDao.findByUsername(username);
+    public void checkPassword(final Long customerId, final PasswordRequest request) {
+        Customer customer = customerDao.findById(customerId);
         validatePasswordIsCorrect(customer, request.getPassword());
     }
 
-    private void validatePasswordIsCorrect(Customer customer, String password) {
+    private void validatePasswordIsCorrect(final Customer customer, final String password) {
         if (!encryption.isSame(customer.getPassword(), password)) {
             throw new InvalidAuthException("비밀번호가 일치하지 않습니다.");
         }
     }
+
 }

@@ -1,6 +1,7 @@
 package woowacourse.shoppingcart.dao;
 
 import java.sql.PreparedStatement;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -60,8 +61,26 @@ public class ProductDao {
         return jdbcTemplate.query(query, productRowMapper);
     }
 
+    public List<Product> findProductsByIdsIn(final List<Long> ids) {
+        final String in = String.join(",", Collections.nCopies(ids.size(), "?"));
+        final String query = "SELECT id, name, price, stock, image_url FROM product "
+                + "WHERE id IN (" + in + ")";
+        return jdbcTemplate.query(query, productRowMapper, ids.toArray());
+    }
+
+    public void updateStock(final Product product) {
+        final String query = "UPDATE product SET stock = ? WHERE id = ?";
+        int rowCount = jdbcTemplate.update(query, product.getStock(), product.getId());
+        if (rowCount == 0) {
+            throw new InvalidProductException();
+        }
+    }
+
     public void delete(final Long productId) {
         final String query = "DELETE FROM product WHERE id = ?";
-        jdbcTemplate.update(query, productId);
+        int rowCount = jdbcTemplate.update(query, productId);
+        if (rowCount == 0) {
+            throw new InvalidProductException("이미 존재하지 않는 상품입니다.");
+        }
     }
 }

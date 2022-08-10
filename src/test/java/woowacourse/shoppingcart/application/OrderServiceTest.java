@@ -54,7 +54,7 @@ class OrderServiceTest {
         CartItem cartItem = new CartItem(product, 1);
         Long cartItemId = cartItemDao.save(customerId, cartItem);
 
-        Long orderId = orderService.save(List.of(new OrderRequest(cartItemId)), "customer");
+        Long orderId = orderService.save(List.of(new OrderRequest(cartItemId)), customerId);
         assertThat(orderId).isNotNull();
     }
 

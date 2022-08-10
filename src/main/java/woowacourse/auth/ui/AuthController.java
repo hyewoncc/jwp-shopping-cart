@@ -13,7 +13,7 @@ import woowacourse.auth.dto.TokenResponse;
 import woowacourse.auth.support.AuthenticationPrincipal;
 
 @RestController
-@RequestMapping("/api/customers")
+@RequestMapping("/api/customer")
 public class AuthController {
 
     private final AuthService authService;
@@ -28,9 +28,9 @@ public class AuthController {
     }
 
     @PostMapping("/password")
-    public ResponseEntity<Void> checkPassword(@AuthenticationPrincipal String username,
+    public ResponseEntity<Void> checkPassword(@AuthenticationPrincipal Long customerId,
                                               @Valid @RequestBody PasswordRequest request) {
-        authService.checkPassword(username, request);
+        authService.checkPassword(customerId, request);
         return ResponseEntity.ok().build();
     }
 
